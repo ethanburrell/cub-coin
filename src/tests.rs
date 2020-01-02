@@ -1,7 +1,8 @@
-mod block_structure_poc;
+use crate::block_structure;
 
-fn generate_genesis_block() -> Box<block_structure_poc::Block> {
-    let gs = Box::new(block_structure_poc::BlockStruct {
+#[allow(dead_code)]
+fn generate_genesis_block() -> Box<block_structure::Block> {
+    let gs = Box::new(block_structure::BlockStruct {
         index: 0,
         difficulty: 0,
         iv: 0,
@@ -11,12 +12,12 @@ fn generate_genesis_block() -> Box<block_structure_poc::Block> {
     });
 
     let hash_data = Box::new([0; 256]);
-    let mut genesis = Box::new(block_structure_poc::Block {
+    let mut genesis = Box::new(block_structure::Block {
         block_struct: gs,
         hash: hash_data
     });
-    block_structure_poc::create_block_hash(&mut genesis);
-    return gs
+    block_structure::create_block_hash(&mut genesis);
+    return genesis
 }
 
 #[cfg(test)]
@@ -34,44 +35,44 @@ mod tests {
         // there are 2 leading zeros
 
         // test to see if there is one leading 0
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 0);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 0);
         assert_eq!(ans, false);
     }
     #[test]
     fn test_validate_difficulty_1() {
         let genesis = generate_genesis_block();
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 1);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 1);
         assert_eq!(ans, false);
     }
     #[test]
     fn test_validate_difficulty_2() {
         let genesis = generate_genesis_block();
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 2);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 2);
         assert_eq!(ans, true);
     }
     #[test]
     fn test_validate_difficulty_3() {
         let genesis = generate_genesis_block();
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 3);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 3);
         assert_eq!(ans, false);
     }
     #[test]
     fn test_validate_difficulty_4() {
         let genesis = generate_genesis_block();
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 4);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 4);
         assert_eq!(ans, false);
     }
     #[test]
     fn test_validate_difficulty_256() {
         let genesis = generate_genesis_block();
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 256);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 256);
         assert_eq!(ans, false);
     }
     #[test]
     #[should_panic]
     fn test_validate_difficulty_257() {
         let genesis = generate_genesis_block();
-        let ans = block_structure_poc::validate_difficulty(*genesis.hash, 257);
+        let ans = block_structure::validate_difficulty(*genesis.hash, 257);
         assert_eq!(ans, false);
     }
 }
