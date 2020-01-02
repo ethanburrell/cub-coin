@@ -37,7 +37,6 @@ mod tests {
         let ans = block_structure_poc::validate_difficulty(*genesis.hash, 0);
         assert_eq!(ans, false);
     }
-
     #[test]
     fn test_validate_difficulty_1() {
         let genesis = generate_genesis_block();
