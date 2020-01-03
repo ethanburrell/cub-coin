@@ -14,7 +14,7 @@ sys.path.insert(0, myPath + '/../src/')
 from block_structure import Block
 
 
-def gensis_block_test():
+def test_gensis_block():
     genesis_block = Block(0, 0, 0, 0, 1577836800, "Let's see what hash of this is")
     print(genesis_block.check_difficulty(2))
     assert genesis_block.check_difficulty(2) == True, "Difficulty and 0s did not match"
@@ -23,5 +23,4 @@ def gensis_block_test():
     assert genesis_block.check_difficulty(1) == False, "Difficulty and 0s did not match"
 
 
-gensis_block_test()
 #other()
