@@ -12,10 +12,12 @@ import sys, os
 myPath = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, myPath + '/../src/')
 from block_structure import Block
+from utils import return_genesis_block
 
 
 def test_gensis_block():
-    genesis_block = Block(0, 0, 0, 0, 1577836800, "Let's see what hash of this is")
+    genesis_block = return_genesis_block()
+    #Block(0, 0, 0, 0, 1577836800, "Let's see what hash of this is")
     print(genesis_block.check_difficulty(2))
     assert genesis_block.check_difficulty(2) == True, "Difficulty and 0s did not match"
     assert genesis_block.check_difficulty(3) == False, "Difficulty and 0s did not match"
