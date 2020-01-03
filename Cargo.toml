@@ -15,4 +15,8 @@ sha2 = "0.8.0"
 generic-array = "0.13.2"
 rust-crypto = "0.2.36"
 throw = "0.1.7"
-rocket = "0.4.2"
+#rocket = "0.4.2"
+tokio = { version = "0.2.6", features = ["full"] }
+futures = "0.3"
+
+url = "2.1.0"
