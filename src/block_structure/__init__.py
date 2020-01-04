@@ -80,3 +80,23 @@ class Block():
         if not self.check_difficulty(self.struct.difficulty):
             return False
         return True
+
+class BlockConstructor():
+    def __init__(self):
+        self.z = 0
+
+    def unserialize(data):
+        """
+        Alternitave constructor
+        """
+        index = data["index"]
+        difficulty = data["difficulty"]
+        iv = data["iv"]
+        prevHash = data["prevHash"]
+        prevHashBytes =base64.b64decode(prevHash)
+        #base64.b64encode(self.prevHash).decode('ascii')
+        timestamp = data["timestamp"]
+        block_data = data["data"]
+        self.struct = BlockStruct(index, difficulty, iv, prevHashBytes, timestamp, block_data)
+        #self.hash = self.calc_hash()
+        return Block(index, difficulty, iv, prevHashBytes, timestamp, block_data)

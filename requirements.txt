@@ -1,3 +1,7 @@
 pytest
 websockets
 freezegun
+asyncio
+websockets
+ws4py
+cherrypy
