@@ -1,7 +1,14 @@
+from block_structure import BlockConstructor
+
+
 class Blockchain:
-    def __init__(self, genesis, first):
-        self.chain = [genesis, first]
-        self.length = len(self.chain)
+    def __init__(self, genesis, first = None):
+        if first == None:
+            self.chain = [genesis]
+            self.length = len(self.chain)
+        else:
+            self.chain = [genesis, first]
+            self.length = len(self.chain)
 
     def add(self, new_block):
         assert new_block.validate_new_block(self.chain[-1]) == True, "New Block is not valid"
@@ -13,6 +20,9 @@ class Blockchain:
         self.length = len(new_chain)
 
     def validate_chain(self):
+        if len(self.chain) == 1:
+            print("can't validate")
+            return False
         if len(self.chain) <= 2:
             return self.chain[1].validate_new_block(self.chain[0])
 
@@ -48,3 +58,11 @@ class Blockchain:
                 return self
             else:
                 return other_blockchain
+
+
+    def unserialize_blockchain(self, data):
+        last = BlockConstructor().unserialize(data[0])
+        for i in range(1, len(data)):
+            curr = BlockConstructor().unserialize(data[i])
+
+            last = curr

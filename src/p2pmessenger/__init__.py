@@ -4,25 +4,29 @@ import json
 import time
 from concurrent.futures import ProcessPoolExecutor
 
-from blockchain import Blockchain
+#from blockchain import Blockchain
 from block_structure import Block
+#from server import start_server
 
 class ConnectionManager:
     def __init__(self, first_address):
         self.init_address = first_address
-        get_peers(first_address)
+        asyncio.get_event_loop().run_until_complete(self.get_peers())
+
+    def add_peer(self, peer):
+        self.peers.append(peer)
 
     async def hello(uri):
         async with websockets.connect(uri) as websocket:
-            await websocket.send(json.dumps({"asdf":1}))
+            await websocket.send(json.dumps({"request": ""}))
             response = await websocket.recv()
 
-    async def get_peers(uri):
-        async with websockets.connect(uri) as websocket:
+    async def get_peers(self):
+        async with websockets.connect(self.init_address) as websocket:
             await websocket.send(json.dumps({"request": "peers"}))
             response = await websocket.recv()
             print(response)
-            self.peers = json.endcode(response)["peers"]
+            self.peers = json.loads(response)["peers"]
 
     async def run_many_coroutines(f):
         input_coroutines = [f(i) for i in self.peers]
@@ -30,16 +34,40 @@ class ConnectionManager:
         res = await asyncio.gather(*input_coroutines, return_exceptions=True)
         return res
 
+    async def run_many_coroutines_2(f, param):
+        input_coroutines = [f(i, param) for i in self.peers]
+        #[f(argv[0])] * len(self.peers)
+        res = await asyncio.gather(*input_coroutines, return_exceptions=True)
+        return res
+
     def call_action_on_clients(self, f, *argv):
         list = [None] * len(self.peers)
-        list = asyncio.get_event_loop().run_until_complete(run_many_coroutines(hello))
+        list = asyncio.get_event_loop().run_until_complete(run_many_coroutines(f))
 
-    async def rebroadcast_block(uri):
+    def call_action_on_clients_2(self, f, param):
+        list = [None] * len(self.peers)
+        list = asyncio.get_event_loop().run_until_complete(run_many_coroutines_2(f, param))
+
+    async def broadcast_block(uri, data):
         async with websockets.connect(uri) as websocket:
-            await websocket.send(json.dumps({"asdf":1}))
+            d = {"request": "new block"}
+            d["data"] = data
+            await websocket.send(json.dumps(d))
             response = await websocket.recv()
 
+    def mine(self, index, difficulty, prevHash):
+        #index, difficulty, iv, prevHash, timestamp, data
+        b = Block(index, difficulty, 0, prevHash, 4983934 ,"mining block")
+        while True:
+            if b.check_difficulty(difficulty):
+                break
+            b.struct.random_nonce()
+        print("done with this block")
+        self.call_action_on_clients_2(self.broadcast_block, b.to_dict())
+        #return b
 
+#cm = ConnectionManager("ws://localhost:9000")
+#print(cm.peers)
 """
 async def multiple_tasks(dummy):
   input_coroutines = [get_peers(dummy), get_peers(dummy)]
@@ -50,8 +78,10 @@ res1, res2 = asyncio.get_event_loop().run_until_complete(multiple_tasks('ws://lo
 res1, res2 = asyncio.get_event_loop().run_forever()
 """
 
-# THE SERVER
 
+
+# THE SERVER
+"""
 async def echo(websocket, path):
     connected.add(websocket)
     async for message in websocket:
@@ -65,10 +95,11 @@ async def echo(websocket, path):
                 await websocket.send("hello")
             elif data["request"] == "new block":
                 print("it's a new block request")
-                
+
 
         await websocket.send(message)
 
 asyncio.get_event_loop().run_until_complete(
-    websockets.serve(echo, 'localhost', 9000))
+    websockets.serve(echo, 'localhost', 8999))
 asyncio.get_event_loop().run_forever()
+"""

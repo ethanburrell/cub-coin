@@ -1,6 +1,8 @@
 import hashlib
 import json
 import base64
+import binascii
+from random import randint
 
 class BlockStruct():
     def __init__(self, index, difficulty, iv, prevHash, timestamp, data):
@@ -32,6 +34,9 @@ class BlockStruct():
             'timestamp': self.timestamp,
             'data': self.data
         }
+
+    def random_nonce(self):
+        self.iv = randint(-2147483648, 2147483648)
 
 class Block():
     def __init__(self, index, difficulty, iv, prevHash, timestamp, data):
@@ -81,11 +86,18 @@ class Block():
             return False
         return True
 
+    def to_dict(self):
+        d = self.struct.to_dict()
+        encoded = base64.b64encode(self.hash).decode('ascii')
+        d["hash"] = encoded
+        return d
+
+
 class BlockConstructor():
     def __init__(self):
         self.z = 0
 
-    def unserialize(data):
+    def unserialize(self, data):
         """
         Alternitave constructor
         """
@@ -93,7 +105,10 @@ class BlockConstructor():
         difficulty = data["difficulty"]
         iv = data["iv"]
         prevHash = data["prevHash"]
-        prevHashBytes =base64.b64decode(prevHash)
+        prevHashBytes = binascii.a2b_base64(prevHash)
+        #base64.decodebytes(base64.b64decode(prevHash))
+        #prevHash.encode('ascii','strict')
+        #base64.b64decode(prevHash).decode('ascii')
         #base64.b64encode(self.prevHash).decode('ascii')
         timestamp = data["timestamp"]
         block_data = data["data"]
