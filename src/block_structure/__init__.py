@@ -61,6 +61,7 @@ class Block():
         print("string", self.hash[0])
         c = 0
         flag = False
+        self.hash = self.calc_hash()
         for item in self.hash:
             byte = '{0:08b}'.format(item)
             print(byte)

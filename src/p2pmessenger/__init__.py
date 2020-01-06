@@ -9,9 +9,14 @@ from block_structure import Block
 #from server import start_server
 
 class ConnectionManager:
-    def __init__(self, first_address):
+    def __init__(self, first_address, bc, auto_connect = True):
         self.init_address = first_address
-        asyncio.get_event_loop().run_until_complete(self.get_peers())
+        self.bc = bc
+        if auto_connect:
+            asyncio.get_event_loop().run_until_complete(self.get_peers())
+        else:
+            self.peers = []
+        self.loop=None
 
     def add_peer(self, peer):
         self.peers.append(peer)
@@ -27,45 +32,54 @@ class ConnectionManager:
             response = await websocket.recv()
             print(response)
             self.peers = json.loads(response)["peers"]
+            temp_chain = json.loads(response)["chain"]
+            self.bc.unserialize_blockchain(temp_chain)
 
-    async def run_many_coroutines(f):
+
+    async def call_action_on_clients(self, f, *argv):
+        list = [None] * len(self.peers)
+        list = await asyncio.get_event_loop().run_until_complete(self.run_many_coroutines(f))
+
+    async def call_action_on_clients_2(self, f, param):
+        list = [None] * len(self.peers)
+        #list = await asyncio.get_event_loop().run_until_complete(self.run_many_coroutines_2(f, param))
+        #list = await self.loop.run_until_complete(self.run_many_coroutines_2(f, param))
+        list = self.loop.create_task(self.run_many_coroutines_2(f, param))
+
+    async def broadcast_block(self, uri, data):
+        async with websockets.connect(uri) as websocket:
+            print("send to websocket")
+            d = {"request": "new block"}
+            d["data"] = data
+            await websocket.send(json.dumps(d))
+            #response = await websocket.recv()
+
+    def mine(self, index, difficulty, prevHash):
+        #index, difficulty, iv, prevHash, timestamp, data
+        b = Block(index, difficulty, 0, prevHash, 4983934 ,"mining block")
+        b.struct.random_nonce()
+        while True:
+            if b.check_difficulty(difficulty):
+                print("asdf")
+                break
+            b.struct.random_nonce()
+        print("done with this block")
+        #asyncio.get_event_loop().create_task(self.call_action_on_clients_2(self.broadcast_block, b.to_dict()))
+        self.loop.create_task(self.call_action_on_clients_2(self.broadcast_block, b.to_dict()))
+        return b
+
+    async def run_many_coroutines(self, f):
         input_coroutines = [f(i) for i in self.peers]
         #[f(argv[0])] * len(self.peers)
         res = await asyncio.gather(*input_coroutines, return_exceptions=True)
         return res
 
-    async def run_many_coroutines_2(f, param):
+    async def run_many_coroutines_2(self, f, param):
+        print("run_many_coroutines_2")
         input_coroutines = [f(i, param) for i in self.peers]
         #[f(argv[0])] * len(self.peers)
         res = await asyncio.gather(*input_coroutines, return_exceptions=True)
         return res
-
-    def call_action_on_clients(self, f, *argv):
-        list = [None] * len(self.peers)
-        list = asyncio.get_event_loop().run_until_complete(run_many_coroutines(f))
-
-    def call_action_on_clients_2(self, f, param):
-        list = [None] * len(self.peers)
-        list = asyncio.get_event_loop().run_until_complete(run_many_coroutines_2(f, param))
-
-    async def broadcast_block(uri, data):
-        async with websockets.connect(uri) as websocket:
-            d = {"request": "new block"}
-            d["data"] = data
-            await websocket.send(json.dumps(d))
-            response = await websocket.recv()
-
-    def mine(self, index, difficulty, prevHash):
-        #index, difficulty, iv, prevHash, timestamp, data
-        b = Block(index, difficulty, 0, prevHash, 4983934 ,"mining block")
-        while True:
-            if b.check_difficulty(difficulty):
-                break
-            b.struct.random_nonce()
-        print("done with this block")
-        self.call_action_on_clients_2(self.broadcast_block, b.to_dict())
-        #return b
-
 #cm = ConnectionManager("ws://localhost:9000")
 #print(cm.peers)
 """

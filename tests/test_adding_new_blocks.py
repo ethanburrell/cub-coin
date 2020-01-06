@@ -50,3 +50,19 @@ def test_add_new_block_to_chain():
 
     new_chain = bc_short.resolve_via_length(bc)
     assert new_blockchain.chain == longer_chain, "The chain is not the longer one"
+
+def init_chain():
+    genesis_block = return_genesis_block()
+    b = Block(1, 0, 213123123123123,
+    b'2\x84\x0f\xf6<\x88\xeb\xbej\xcc\xa6C\x02\xc47\x89J!\x93\xf5\x14S\xc6<Y=\xe2?\xf3\xe5\xae\xa2',
+    1577836800, "first block")
+    # first of this is 10011100
+    bc = Blockchain(genesis_block, b)
+
+    b1 = Block(2, 0, 6477374,
+    b'\x8a\x1c\x88T;\x86\x99\xe7i\xa1\xf9Y\x11\x9a\x9675\xd4^^ae+\x10h\x9f\x1f\x91{v\x99n',
+    1577836845, "second block")
+
+    bc.add(b1)
+
+    return bc

@@ -62,7 +62,13 @@ class Blockchain:
 
     def unserialize_blockchain(self, data):
         last = BlockConstructor().unserialize(data[0])
+        temp = [last]
         for i in range(1, len(data)):
             curr = BlockConstructor().unserialize(data[i])
-
+            if not curr.validate_new_block(last):
+                return False
+            temp.append(curr)
             last = curr
+        self.chain = temp
+        self.length = len(temp)
+        return True
