@@ -11,7 +11,7 @@ import ipaddress
 
 genesis_block = Block(0, 0, 0, b'0', 1577836800, "Let's see what hash of this is")
 bc = Blockchain(genesis_block)
-cm = ConnectionManager("ws://localhost:9000", bc, auto_connect = False)
+cm = ConnectionManager("ws://localhost:8999", bc, auto_connect = False)
 #print(cm.peers)
 
 async def eval_requests(websocket, path):

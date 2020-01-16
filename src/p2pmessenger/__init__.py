@@ -44,13 +44,14 @@ class ConnectionManager:
         list = [None] * len(self.peers)
         #list = await asyncio.get_event_loop().run_until_complete(self.run_many_coroutines_2(f, param))
         #list = await self.loop.run_until_complete(self.run_many_coroutines_2(f, param))
+        print("call_action_on_clients_2")
         list = self.loop.create_task(self.run_many_coroutines_2(f, param))
 
     async def broadcast_block(self, uri, data):
         async with websockets.connect(uri) as websocket:
-            print("send to websocket")
             d = {"request": "new block"}
             d["data"] = data
+            print("send to websocket", data)
             await websocket.send(json.dumps(d))
             #response = await websocket.recv()
 
@@ -75,10 +76,12 @@ class ConnectionManager:
         return res
 
     async def run_many_coroutines_2(self, f, param):
-        print("run_many_coroutines_2")
+        print("run_many_coroutines_2", f, param)
         input_coroutines = [f(i, param) for i in self.peers]
+        print("input_coroutines", input_coroutines)
         #[f(argv[0])] * len(self.peers)
         res = await asyncio.gather(*input_coroutines, return_exceptions=True)
+        print("after", self.peers)
         return res
 #cm = ConnectionManager("ws://localhost:9000")
 #print(cm.peers)

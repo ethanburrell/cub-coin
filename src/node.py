@@ -18,6 +18,7 @@ async def eval_requests(websocket, path):
     #print(websocket.remote_address)
     async for message in websocket:
         #print(message.remote_address)
+        print(message)
         data = json.loads(message)
         if "request" in data:
             if data["request"] == "peers":

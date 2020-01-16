@@ -39,6 +39,70 @@ Both of these points must be ensured to have this be a secure way to discover ne
 If (1) is violated, then malicious actors can fake their waiting times and always win the race.
 The second is a way to encourage participation in the network. Unlike normal PoW, the overall cost
 of setting up a mining system is extremely small, so there is not major incentive to send the new block to
-one user. 
+one user.
 
 #### Why build upon Proof of Elapsed Time
+
+While PoET is only used by [Hyperledger Sawtooth](https://sawtooth.hyperledger.org/), There are reasons
+that make a system like PoET perfect for selecting a leader uniformly at random from a population.
+First, all PoW algorithms most general __ is to order elements proposed from a network of
+untrusted individuals. PoR builds upon this, and creates a energy efficient way to do so.
+
+
+#### Algorithm
+
+Each node defines and *a* and *c*, so their pings are defined by the equation:
+
+![cos\left(ax\right)+c](https://render.githubusercontent.com/render/math?math=cos%5Cleft(ax%5Cright)%2Bc)
+
+This defines the amount of time to wait between "awake" moments. This is the underlying mechanism
+to determine the winner, however in doing this it is very difficult to guarantee that a node is not
+lying about when it awakes. Again, the first to awake is the block leader.
+
+Keeping track of each nodes interval is important to the integrity of the system. If
+nodes are able to maliciously change their waiting time intervals.
+
+| Data sent by node |
+| ------------- |
+| serialized function  |
+| signed function      |
+| node's public signing key (PSK) |
+
+This packet is
+
+###### A centralized approach
+
+Similar to the hashgraph, we look at the median received time for the validators
+
+This process of checking to see that the packets roughly meet their period is easy to
+determine on a small amount of trusted validators. The performance on this small validator
+set, will be very good.
+
+Downsides to this, it requires a centralized entity. However, this operates in an interesting way.
+Generally, there is a trade off is made between between centralization and performance. A
+centralized system generally performs better than a decentralized one, but with less privacy
+for the users.
+
+
+Revise \/
+
+For this centralized approach, only the system keeping track of the beat of each client is
+centralized while the distributed ledger is not centralized. The centralized validators can
+only claim that a certain node was not on the correct rhythm. Even if the centralized system
+was un-trusted the nodes would be able to see the #
+
+
+since we do get better performance out
+
+Even though this has a small
+
+
+
+
+------
+
+------
+
+![e^{i\pi }=-1](https://render.githubusercontent.com/render/math?math=e%5E%7Bi%5Cpi%20%7D%3D-1)
+
+https://alexanderrodin.com/github-latex-markdown/?math=e%5E%7Bi%5Cpi%20%7D%3D-1
