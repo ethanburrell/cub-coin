@@ -41,7 +41,7 @@ was conceptualized without the knowledge of PoET.
 
 Proof of Rhythm uses a sinusoidal function to create long periods of the process being asleep,
 with small moments of the process becoming awake. There are several tradeoffs here, and some
-cryptonomics[correct word for this] in play. There are some guarantees that this process must give:
+cryptonomics[is this the correct word for this?] in play. There are some guarantees that this process must give:
 1. The elected node must have waited according to its function, in a way that is verifiable
 by the network.
 2. The winning node must be selected at random, so nodes running functions with different
